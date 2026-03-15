@@ -6,7 +6,8 @@ A smart, AI-powered news aggregator that pulls live articles from multiple RSS f
 
 ## 🚀 Live Demo
 
-[View Live Site]
+[[View Live Site]](https://smart-news-aggregator.vercel.app/)
+
 
 ---
 
