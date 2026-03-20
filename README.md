@@ -32,7 +32,7 @@ A smart, AI-powered news aggregator that pulls live articles from multiple RSS f
 
 ---
 
-## 📦 Getting Started
+<!--## 📦 Getting Started
 
 ### Prerequisites
 - Node.js v18+
@@ -64,7 +64,7 @@ A smart, AI-powered news aggregator that pulls live articles from multiple RSS f
 5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ---
-
+-->
 ## 📡 RSS Feeds
 
 | Source | Category |
