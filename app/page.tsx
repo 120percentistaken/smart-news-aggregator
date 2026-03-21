@@ -173,6 +173,160 @@ function DigestCard({ digest }: { digest: DigestGroup }) {
   );
 }
 
+function FeedbackBox() {
+  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit() {
+    if (!message.trim()) return;
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, email }),
+      });
+      if (res.ok) {
+        setStatus("sent");
+        setMessage("");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div
+      style={{
+        background: theme.card,
+        border: `1px solid ${theme.cardBorder}`,
+        borderTop: "4px solid #9a9185",
+        borderRadius: "4px",
+        padding: "1.5rem",
+        marginBottom: "1.5rem",
+      }}
+    >
+      {/* Title */}
+      <h2
+        style={{
+          fontFamily: "Playfair Display, serif",
+          fontSize: "1.2rem",
+          fontWeight: 700,
+          color: theme.textPrimary,
+          margin: "0 0 0.4rem",
+        }}
+      >
+        Share your feedback
+      </h2>
+      <p
+        style={{
+          fontFamily: "Source Sans 3, sans-serif",
+          fontSize: "0.82rem",
+          color: theme.textSecondary,
+          margin: "0 0 1.25rem",
+        }}
+      >
+        Got a suggestion or found something broken? Let us know.
+      </p>
+
+      {/* Email input */}
+      <input
+        type="email"
+        placeholder="Your email (optional)"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{
+          width: "100%",
+          background: theme.bg,
+          border: `1px solid ${theme.cardBorder}`,
+          borderRadius: "4px",
+          padding: "0.65rem 0.9rem",
+          color: theme.textPrimary,
+          fontFamily: "Source Sans 3, sans-serif",
+          fontSize: "0.85rem",
+          marginBottom: "0.75rem",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+
+      {/* Message textarea */}
+      <textarea
+        placeholder="Write your feedback here..."
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        rows={4}
+        style={{
+          width: "100%",
+          background: theme.bg,
+          border: `1px solid ${theme.cardBorder}`,
+          borderRadius: "4px",
+          padding: "0.65rem 0.9rem",
+          color: theme.textPrimary,
+          fontFamily: "Source Sans 3, sans-serif",
+          fontSize: "0.85rem",
+          resize: "vertical",
+          marginBottom: "1rem",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+
+      {/* Submit button */}
+      <button
+        onClick={handleSubmit}
+        disabled={status === "sending" || !message.trim()}
+        style={{
+          background: theme.button,
+          color: theme.buttonText,
+          border: "none",
+          padding: "0.55rem 1.5rem",
+          borderRadius: "4px",
+          cursor: status === "sending" || !message.trim() ? "not-allowed" : "pointer",
+          fontFamily: "Source Sans 3, sans-serif",
+          fontSize: "0.82rem",
+          fontWeight: 700,
+          opacity: status === "sending" || !message.trim() ? 0.5 : 1,
+          letterSpacing: "0.05em",
+        }}
+      >
+        {status === "sending" ? "Sending..." : "Send Feedback"}
+      </button>
+
+      {/* Success message */}
+      {status === "sent" && (
+        <p
+          style={{
+            marginTop: "0.75rem",
+            color: "#8aab8a",
+            fontFamily: "Source Sans 3, sans-serif",
+            fontSize: "0.82rem",
+          }}
+        >
+          ✓ Thanks for your feedback!
+        </p>
+      )}
+
+      {/* Error message */}
+      {status === "error" && (
+        <p
+          style={{
+            marginTop: "0.75rem",
+            color: "#e07a5f",
+            fontFamily: "Source Sans 3, sans-serif",
+            fontSize: "0.82rem",
+          }}
+        >
+          Something went wrong. Please try again.
+        </p>
+      )}
+    </div>
+  );
+}
 export default function Home() {
   const [digests, setDigests] = useState<DigestGroup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -339,7 +493,12 @@ export default function Home() {
           {!loading && !error && digests.map((digest, i) => (
             <DigestCard key={i} digest={digest} />
           ))}
-        </main>
+       </main>
+
+        {/* Feedback */}
+        <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 2rem 2rem" }}>
+          <FeedbackBox />
+        </div>
 
         {/* Footer */}
         <footer
