@@ -2,6 +2,39 @@
 
 import { useEffect, useState } from "react";
 import { type DigestGroup } from "./api/digest/route";
+import { type ReputationInfo } from "@/lib/reputation";
+
+const reputationStyles: Record<string, { bg: string; text: string; label: string }> = {
+  high: { bg: "#1f3a24", text: "#8aab8a", label: "High reliability" },
+  mixed: { bg: "#3a3319", text: "#d4b95f", label: "Mixed reliability" },
+  low: { bg: "#3a241a", text: "#e07a5f", label: "Low reliability" },
+  very_low: { bg: "#3a1a1a", text: "#e05f5f", label: "Very low reliability" },
+  satire: { bg: "#2a1f3a", text: "#b39ddb", label: "Satire" },
+  unknown: { bg: "#2e2a24", text: "#9a9185", label: "Unrated" },
+};
+
+function ReputationBadge({ reputation }: { reputation: ReputationInfo }) {
+  const style = reputationStyles[reputation.rating] ?? reputationStyles.unknown;
+  return (
+    <span
+      title={reputation.note}
+      style={{
+        display: "inline-block",
+        fontFamily: "Source Sans 3, sans-serif",
+        fontSize: "0.65rem",
+        fontWeight: 700,
+        letterSpacing: "0.03em",
+        padding: "0.15rem 0.5rem",
+        borderRadius: "999px",
+        background: style.bg,
+        color: style.text,
+        marginLeft: "0.5rem",
+      }}
+    >
+      {style.label}
+    </span>
+  );
+}
 
 const theme = {
   bg: "#1a1410",
@@ -13,6 +46,7 @@ const theme = {
   button: "#f0ece4",
   buttonText: "#1a1410",
 };
+
 
 const topicMeta: Record<string, { icon: string; color: string; label: string }> = {
   Rappler: { icon: "🇵🇭", color: "#e07a5f", label: "Philippines" },
@@ -165,6 +199,7 @@ function DigestCard({ digest }: { digest: DigestGroup }) {
                 ●
               </span>
               {article.title.trim()}
+              <ReputationBadge reputation={article.reputation} />
             </a>
           ))}
         </div>
