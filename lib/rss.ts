@@ -1,5 +1,6 @@
 // We're using rss-parser to do the heavy lifting of reading RSS feeds for us
 import Parser from "rss-parser";
+import { getReputation, type ReputationInfo } from "@/lib/reputation";
 
 // One parser is enough for everything we need
 const parser = new Parser();
@@ -20,6 +21,7 @@ export type Article = {
   summary: string;  // A short preview of what it's about
   date: string;     // When it was posted
   source: string;   // Which site it came from
+  reputation: ReputationInfo; // The reputation score and category for this article
 };
 
 // This is the main function — it grabs articles from all feeds and returns them as one big list
@@ -38,6 +40,7 @@ export async function fetchAllFeeds(): Promise<Article[]> {
         summary: item.contentSnippet ?? item.content ?? "",
         date: item.pubDate ?? "",
         source: feed.name, // So we know later which site this came from
+        reputation: getReputation(item.link ?? ""), // Get the reputation score and category for this article
       }));
     })
   );
